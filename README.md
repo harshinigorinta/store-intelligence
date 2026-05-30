@@ -10,9 +10,9 @@ End-to-end pipeline from raw CCTV footage to a live store analytics API.
 ```bash
 git clone https://github.com/harshinigorinta/store-intelligence.git
 cd store-intelligence
-cp -r /path/to/your/clips data/clips/   # add your MP4 files here
+# Add your MP4 clips to data/clips/ folder
 docker compose up -d
-python feed_events.py                    # optional: feed sample events
+curl http://localhost:8000/health
 ```
 
 API is live at: http://localhost:8000
@@ -162,7 +162,14 @@ CCTV Clips → YOLOv8s Detection → ByteTrack Tracking → Event Stream (JSONL)
 | Empty periods | API returns zero metrics, does not crash |
 
 ---
+## Live Dashboard
 
+Run the terminal dashboard (updates every 2 seconds):
+```bash
+python dashboard/live.py
+```
+Dashboard URL: http://localhost:8000 (API backend)
+Terminal dashboard shows: unique visitors, conversion rate, funnel, anomalies live.
 ## Notes
 
 - Video clips are not included in the repository (per challenge rules)
