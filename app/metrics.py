@@ -83,12 +83,13 @@ def get_metrics(store_id: str, conn) -> dict:
 def get_funnel(store_id: str, conn) -> dict:
     # All unique customer sessions (by visitor_id, deduplicated — re-entries don't add)
     total_entries = conn.execute(text("""
-        SELECT COUNT(DISTINCT visitor_id)
-        FROM events
-        WHERE store_id = :store_id
-          AND is_staff = 0
-          AND event_type IN ('ENTRY', 'REENTRY')
-    """), {"store_id": store_id}).scalar() or 0
+    SELECT COUNT(DISTINCT visitor_id)
+    FROM events
+    WHERE store_id = :store_id
+      AND is_staff = 0
+      AND event_type = 'ENTRY'
+      AND camera_id LIKE '%ENTRY%'
+"""), {"store_id": store_id}).scalar() or 0
 
     # Visitors who entered at least one zone
     zone_visitors = conn.execute(text("""

@@ -87,18 +87,19 @@ def get_conn():
 
 @app.post("/events/ingest")
 def ingest(request: IngestRequest):
-    """
-    Accept up to 500 events per call.
-    Idempotent: same event_id submitted twice is safe.
-    Returns partial success on malformed events.
-    """
     if len(request.events) > 500:
         raise HTTPException(status_code=400, detail="Batch size exceeds 500 events")
 
     with get_conn() as conn:
         result = ingest_events(request, conn)
-    return result
 
+    logger.info(json.dumps({
+        "endpoint": "/events/ingest",
+        "event_count": len(request.events),
+        "accepted": result.accepted,
+        "rejected": result.rejected,
+    }))
+    return result
 
 @app.get("/stores/{store_id}/metrics")
 def metrics(store_id: str):
