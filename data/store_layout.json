@@ -1,0 +1,83 @@
+{
+  "stores": [
+    {
+      "store_id": "STORE_BLR_002",
+      "name": "Apex Retail Bangalore",
+      "open_hours": {"open": "10:00", "close": "21:00"},
+      "cameras": [
+        {
+          "camera_id": "CAM_ENTRY_01",
+          "file": "CAM 1.mp4",
+          "type": "entry",
+          "clip_start_time": "2026-03-03T10:00:00Z"
+        },
+        {
+          "camera_id": "CAM_FLOOR_01",
+          "file": "CAM 2.mp4",
+          "type": "floor",
+          "clip_start_time": "2026-03-03T10:00:00Z"
+        },
+        {
+          "camera_id": "CAM_FLOOR_02",
+          "file": "CAM 3.mp4",
+          "type": "floor",
+          "clip_start_time": "2026-03-03T10:00:00Z"
+        },
+        {
+          "camera_id": "CAM_BILLING_01",
+          "file": "CAM 4.mp4",
+          "type": "billing",
+          "clip_start_time": "2026-03-03T10:00:00Z"
+        },
+        {
+          "camera_id": "CAM_BILLING_02",
+          "file": "CAM 5.mp4",
+          "type": "billing",
+          "clip_start_time": "2026-03-03T10:00:00Z"
+        }
+      ],
+      "zones": [
+        {
+          "zone_id": "ENTRY",
+          "label": "Entry/Exit",
+          "camera_ids": ["CAM_ENTRY_01"],
+          "polygon": [[0.0, 0.7], [1.0, 0.7], [1.0, 1.0], [0.0, 1.0]]
+        },
+        {
+          "zone_id": "SKINCARE",
+          "label": "Skincare",
+          "sku_zone": "MOISTURISER",
+          "camera_ids": ["CAM_FLOOR_01"],
+          "polygon": [[0.0, 0.0], [0.5, 0.0], [0.5, 0.5], [0.0, 0.5]]
+        },
+        {
+          "zone_id": "MAKEUP",
+          "label": "Makeup",
+          "sku_zone": "FOUNDATION",
+          "camera_ids": ["CAM_FLOOR_01"],
+          "polygon": [[0.5, 0.0], [1.0, 0.0], [1.0, 0.5], [0.5, 0.5]]
+        },
+        {
+          "zone_id": "HAIRCARE",
+          "label": "Haircare",
+          "sku_zone": "SHAMPOO",
+          "camera_ids": ["CAM_FLOOR_02"],
+          "polygon": [[0.0, 0.0], [0.5, 0.0], [0.5, 0.5], [0.0, 0.5]]
+        },
+        {
+          "zone_id": "FRAGRANCES",
+          "label": "Fragrances",
+          "sku_zone": "PERFUME",
+          "camera_ids": ["CAM_FLOOR_02"],
+          "polygon": [[0.5, 0.0], [1.0, 0.0], [1.0, 0.5], [0.5, 0.5]]
+        },
+        {
+          "zone_id": "BILLING",
+          "label": "Billing Counter",
+          "camera_ids": ["CAM_BILLING_01", "CAM_BILLING_02"],
+          "polygon": [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]]
+        }
+      ]
+    }
+  ]
+}
