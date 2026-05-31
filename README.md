@@ -1,7 +1,7 @@
 # Store Intelligence System
-**Purplle Tech Challenge 2026 — Round 2**
 
 End-to-end pipeline from raw CCTV footage to a live store analytics API.
+Built for Brigade Road Bangalore store (STORE_BLR_002) with real zone layout and POS data.
 
 ---
 
@@ -84,7 +84,20 @@ pip install pytest pytest-cov httpx
 pytest tests/ -v --cov=app --cov-report=term-missing
 ```
 
-Expected: 13 tests passing, ~77% coverage.
+Expected: 21 tests passing, 88% coverage.
+
+---
+
+## Live Dashboard
+
+Run the terminal dashboard (updates every 2 seconds):
+
+```bash
+python dashboard/live.py
+```
+
+Dashboard shows: unique visitors, conversion rate, funnel stages, and active anomalies updating live.
+API backend: http://localhost:8000
 
 ---
 
@@ -93,30 +106,35 @@ Expected: 13 tests passing, ~77% coverage.
 ```
 store-intelligence/
 ├── pipeline/
-│   ├── detect.py       # Main detection + tracking script (YOLOv8s + ByteTrack)
-│   ├── tracker.py      # Re-ID + visitor session tracking
-│   └── emit.py         # Event schema + JSONL emission
+│   ├── detect.py          # Main detection + tracking script (YOLOv8s + ByteTrack)
+│   ├── tracker.py         # Re-ID + visitor session tracking
+│   ├── emit.py            # Event schema + JSONL emission
+│   └── run.sh             # One command to process all clips
 ├── app/
-│   ├── main.py         # FastAPI entrypoint + middleware
-│   ├── models.py       # Pydantic event schema
-│   ├── database.py     # SQLAlchemy + SQLite setup
-│   ├── ingestion.py    # Ingest + deduplication
-│   ├── metrics.py      # Real-time metrics + funnel + heatmap
-│   ├── anomalies.py    # Anomaly detection
-│   └── health.py       # Health check
+│   ├── main.py            # FastAPI entrypoint + middleware
+│   ├── models.py          # Pydantic event schema
+│   ├── database.py        # SQLAlchemy + SQLite setup
+│   ├── ingestion.py       # Ingest + deduplication
+│   ├── metrics.py         # Real-time metrics + funnel + heatmap
+│   ├── anomalies.py       # Anomaly detection
+│   └── health.py          # Health check
+├── dashboard/
+│   └── live.py            # Live terminal dashboard (rich)
 ├── tests/
-│   └── test_metrics.py # 13 tests, 77% coverage
+│   ├── test_metrics.py    # 13 core tests
+│   └── test_additional.py # 8 additional edge case tests (88% total coverage)
 ├── docs/
-│   ├── DESIGN.md       # Architecture + AI-assisted decisions
-│   └── CHOICES.md      # 3 key technical decisions
+│   ├── DESIGN.md          # Architecture + AI-assisted decisions
+│   └── CHOICES.md         # 3 key technical decisions
 ├── data/
-│   ├── clips/          # MP4 files (not in repo)
-│   ├── store_layout.json
+│   ├── clips/             # MP4 files (not in repo per challenge rules)
+│   ├── store_layout.json  # Brigade Road Bangalore real zone layout
 │   ├── sample_events.jsonl
 │   └── pos_transactions.csv
 ├── docker-compose.yml
 ├── Dockerfile
 ├── requirements.txt
+├── feed_events.py
 └── README.md
 ```
 
@@ -141,6 +159,30 @@ CCTV Clips → YOLOv8s Detection → ByteTrack Tracking → Event Stream (JSONL)
 
 ---
 
+## Store Layout — Brigade Road Bangalore (STORE_BLR_002)
+
+Real zone definitions from actual store layout:
+
+| Zone | Label | Type |
+|------|-------|------|
+| ENTRY | Entry/Exit | Entry camera |
+| GV | Good Vibes | Floor |
+| DERMDOC | DermDoc | Floor |
+| MINIMALIST | Minimalist | Floor |
+| FOXTALE | Foxtale/Pilgrim | Floor |
+| FRAGRANCE | Fragrance & Nails | Floor |
+| FOH | Front of House | Floor |
+| MAKEUP_UNIT | Makeup Unit | Floor |
+| MAYBELLINE | Maybelline | Floor |
+| FACES | Faces Canada | Floor |
+| LAKME | Lakme | Floor |
+| NYBAE | NY Bae / Mars | Floor |
+| ALPS | Alps / Mens Care | Floor |
+| LOREAL | Loreal | Floor |
+| BILLING | Cash Counter | Billing camera |
+
+---
+
 ## Detection Pipeline Details
 
 - **Model:** YOLOv8s (person detection, class 0)
@@ -162,14 +204,16 @@ CCTV Clips → YOLOv8s Detection → ByteTrack Tracking → Event Stream (JSONL)
 | Empty periods | API returns zero metrics, does not crash |
 
 ---
-## Live Dashboard
 
-Run the terminal dashboard (updates every 2 seconds):
-```bash
-python dashboard/live.py
-```
-Dashboard URL: http://localhost:8000 (API backend)
-Terminal dashboard shows: unique visitors, conversion rate, funnel, anomalies live.
+## Results
+
+- **846 unique visitors** detected across 5 camera feeds
+- **36.2% conversion rate** (visitors who reached billing)
+- **2,794 structured events** generated from real footage
+- **21 tests passing** at 88% coverage
+
+---
+
 ## Notes
 
 - Video clips are not included in the repository (per challenge rules)
