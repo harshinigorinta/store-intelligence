@@ -1,7 +1,7 @@
 {
   "stores": [
     {
-      "store_id": "ST1008",
+      "store_id": "STORE_BLR_002",
       "name": "Brigade_Bangalore",
       "city": "Bangalore",
       "open_hours": {"open": "10:00", "close": "22:00"},
