@@ -1,0 +1,796 @@
+at > /mnt/user-data/outputs/dashboard.html << 'HTMLEOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Store Intelligence | Brigade Road Command Center</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: #2a2a3a;
+    --accent: #7c6aff;
+    --accent2: #ff6a9e;
+    --green: #00e5a0;
+    --yellow: #ffd166;
+    --red: #ff4d6d;
+    --text: #e8e8f0;
+    --muted: #6b6b80;
+    --mono: 'Space Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(124,106,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124,106,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+
+  /* Header */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .logo-text h1 {
+    font-family: var(--mono);
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--text);
+  }
+
+  .logo-text p {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .live-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0,229,160,0.1);
+    border: 1px solid rgba(0,229,160,0.2);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: var(--green);
+    font-family: var(--mono);
+  }
+
+  .live-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  .api-status {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+
+  /* Metric cards row */
+  .metrics-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .metric-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+  }
+
+  .metric-card:hover { border-color: var(--accent); }
+
+  .metric-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-family: var(--mono);
+  }
+
+  .metric-value {
+    font-family: var(--mono);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .metric-value.green { color: var(--green); }
+  .metric-value.yellow { color: var(--yellow); }
+  .metric-value.red { color: var(--red); }
+  .metric-value.accent { color: var(--accent); }
+
+  .metric-sub {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* Main grid */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .panel-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .panel-title span {
+    background: var(--surface2);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    color: var(--accent);
+  }
+
+  /* Funnel */
+  .funnel-stage {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .funnel-label {
+    font-size: 12px;
+    color: var(--muted);
+    width: 100px;
+    flex-shrink: 0;
+  }
+
+  .funnel-bar-wrap {
+    flex: 1;
+    height: 28px;
+    background: var(--surface2);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .funnel-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 4px;
+    transition: width 1s ease;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+  }
+
+  .funnel-count {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: white;
+    white-space: nowrap;
+  }
+
+  .funnel-drop {
+    font-size: 11px;
+    color: var(--red);
+    width: 50px;
+    text-align: right;
+    font-family: var(--mono);
+    flex-shrink: 0;
+  }
+
+  /* Heatmap */
+  .heatmap-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .heatmap-zone {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .heatmap-zone-bg {
+    position: absolute;
+    inset: 0;
+    opacity: 0.15;
+    border-radius: 8px;
+  }
+
+  .heatmap-zone-name {
+    font-size: 10px;
+    font-family: var(--mono);
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    position: relative;
+  }
+
+  .heatmap-zone-score {
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    position: relative;
+    margin-top: 4px;
+  }
+
+  .heatmap-zone-dwell {
+    font-size: 10px;
+    color: var(--muted);
+    position: relative;
+  }
+
+  /* Anomalies */
+  .anomaly-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    background: var(--surface2);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    border-left: 3px solid transparent;
+  }
+
+  .anomaly-item.critical { border-left-color: var(--red); }
+  .anomaly-item.warn { border-left-color: var(--yellow); }
+  .anomaly-item.info { border-left-color: var(--accent); }
+
+  .anomaly-badge {
+    font-size: 9px;
+    font-family: var(--mono);
+    padding: 2px 6px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    flex-shrink: 0;
+    height: fit-content;
+    margin-top: 1px;
+  }
+
+  .anomaly-badge.critical { background: rgba(255,77,109,0.2); color: var(--red); }
+  .anomaly-badge.warn { background: rgba(255,209,102,0.2); color: var(--yellow); }
+  .anomaly-badge.info { background: rgba(124,106,255,0.2); color: var(--accent); }
+
+  .anomaly-text { font-size: 12px; color: var(--text); line-height: 1.4; }
+  .anomaly-action { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+  .no-anomalies {
+    text-align: center;
+    padding: 30px;
+    color: var(--green);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+
+  /* Bottom row */
+  .bottom-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+  }
+
+  /* Dwell table */
+  .dwell-table { width: 100%; border-collapse: collapse; }
+  .dwell-table th {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    font-family: var(--mono);
+    text-align: left;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .dwell-table td {
+    padding: 8px 0;
+    font-size: 12px;
+    border-bottom: 1px solid rgba(42,42,58,0.5);
+  }
+  .dwell-bar-cell { width: 50%; padding-right: 12px; }
+  .dwell-bar-wrap { background: var(--surface2); border-radius: 3px; height: 6px; overflow: hidden; }
+  .dwell-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 3px; transition: width 1s; }
+  .dwell-val { font-family: var(--mono); font-size: 11px; color: var(--accent); }
+
+  /* Health */
+  .health-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+  .health-item:last-child { border-bottom: none; }
+  .health-key { color: var(--muted); font-family: var(--mono); font-size: 11px; }
+  .health-val { font-family: var(--mono); font-size: 12px; }
+  .health-val.ok { color: var(--green); }
+  .health-val.warn { color: var(--yellow); }
+  .health-val.bad { color: var(--red); }
+
+  /* Footer */
+  footer {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--muted);
+    font-family: var(--mono);
+  }
+
+  /* Loading state */
+  .loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 12px;
+    gap: 8px;
+  }
+
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .error-msg {
+    text-align: center;
+    padding: 20px;
+    color: var(--red);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+
+  /* Config bar */
+  .config-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 12px;
+  }
+
+  .config-label { color: var(--muted); font-family: var(--mono); font-size: 11px; }
+
+  .config-input {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 12px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    width: 280px;
+  }
+
+  .config-input:focus { outline: none; border-color: var(--accent); }
+
+  .config-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .config-btn:hover { opacity: 0.8; }
+
+  .refresh-interval {
+    margin-left: auto;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 11px;
+  }
+
+  #last-updated { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🏪</div>
+      <div class="logo-text">
+        <h1>STORE INTELLIGENCE</h1>
+        <p>Brigade Road · Bangalore · STORE_BLR_002</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="live-badge">
+        <div class="live-dot"></div>
+        LIVE
+      </div>
+      <div class="api-status" id="api-status">Connecting...</div>
+    </div>
+  </header>
+
+  <!-- Config bar -->
+  <div class="config-bar">
+    <span class="config-label">API_URL</span>
+    <input class="config-input" id="api-url" value="https://store-intelligence-production-325f.up.railway.app" placeholder="https://store-intelligence-production-325f.up.railway.app" />
+    <input class="config-input" id="store-id" value="STORE_BLR_002" placeholder="STORE_BLR_002" style="width:160px" />
+    <button class="config-btn" onclick="refreshAll()">Connect</button>
+    <span class="refresh-interval">Auto-refresh every 3s · Last updated: <span id="last-updated">—</span></span>
+  </div>
+
+  <!-- Metric Cards -->
+  <div class="metrics-row" id="metrics-row">
+    <div class="metric-card">
+      <div class="metric-label">Unique Visitors</div>
+      <div class="metric-value accent" id="m-visitors">—</div>
+      <div class="metric-sub">today</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Conversion Rate</div>
+      <div class="metric-value green" id="m-conversion">—</div>
+      <div class="metric-sub">visitors → purchase</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Queue Depth</div>
+      <div class="metric-value yellow" id="m-queue">—</div>
+      <div class="metric-sub">billing counter</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Abandonment</div>
+      <div class="metric-value" id="m-abandon">—</div>
+      <div class="metric-sub">left billing queue</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Billing Visitors</div>
+      <div class="metric-value" id="m-billing">—</div>
+      <div class="metric-sub">reached checkout</div>
+    </div>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="main-grid">
+
+    <!-- Funnel -->
+    <div class="panel">
+      <div class="panel-title">Conversion Funnel <span>SESSION UNIT</span></div>
+      <div id="funnel-content"><div class="loading"><div class="spinner"></div>Loading...</div></div>
+    </div>
+
+    <!-- Heatmap -->
+    <div class="panel">
+      <div class="panel-title">Zone Heatmap <span id="heatmap-confidence">—</span></div>
+      <div id="heatmap-content"><div class="loading"><div class="spinner"></div>Loading...</div></div>
+    </div>
+
+    <!-- Anomalies -->
+    <div class="panel">
+      <div class="panel-title">Active Anomalies <span id="anomaly-count">0</span></div>
+      <div id="anomaly-content"><div class="loading"><div class="spinner"></div>Loading...</div></div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Grid -->
+  <div class="bottom-grid">
+
+    <!-- Dwell times -->
+    <div class="panel">
+      <div class="panel-title">Avg Dwell by Zone <span>SECONDS</span></div>
+      <div id="dwell-content"><div class="loading"><div class="spinner"></div>Loading...</div></div>
+    </div>
+
+    <!-- Health -->
+    <div class="panel">
+      <div class="panel-title">System Health</div>
+      <div id="health-content"><div class="loading"><div class="spinner"></div>Loading...</div></div>
+    </div>
+
+  </div>
+
+  <footer>
+    <span>Store Intelligence System · Purplle Tech Challenge 2026</span>
+    <span>YOLOv8s + ByteTrack · FastAPI + SQLite · Brigade Road Bangalore</span>
+  </footer>
+
+</div>
+
+<script>
+  const HEATMAP_COLORS = [
+    '#7c6aff','#ff6a9e','#00e5a0','#ffd166','#ff4d6d',
+    '#4ecdc4','#a855f7','#f97316','#06b6d4','#84cc16'
+  ];
+
+  function apiUrl() {
+    return document.getElementById('api-url').value.replace(/\/$/, '');
+  }
+  function storeId() {
+    return document.getElementById('store-id').value;
+  }
+
+  async function fetchJson(path) {
+    const r = await fetch(apiUrl() + path);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json();
+  }
+
+  async function loadMetrics() {
+    try {
+      const d = await fetchJson(`/stores/${storeId()}/metrics`);
+      document.getElementById('m-visitors').textContent = d.unique_visitors ?? '—';
+      document.getElementById('m-conversion').textContent =
+        d.conversion_rate != null ? (d.conversion_rate * 100).toFixed(1) + '%' : '—';
+      document.getElementById('m-queue').textContent = d.current_queue_depth ?? '—';
+      document.getElementById('m-abandon').textContent =
+        d.abandonment_rate != null ? (d.abandonment_rate * 100).toFixed(1) + '%' : '—';
+      document.getElementById('m-billing').textContent = d.billing_zone_visitors ?? '—';
+
+      // Dwell table
+      const dwell = d.avg_dwell_per_zone_seconds || {};
+      const zones = Object.entries(dwell).sort((a, b) => b[1] - a[1]);
+      const maxDwell = zones.length ? zones[0][1] : 1;
+      if (zones.length === 0) {
+        document.getElementById('dwell-content').innerHTML =
+          '<div class="loading" style="color:var(--muted)">No dwell data yet</div>';
+      } else {
+        document.getElementById('dwell-content').innerHTML = `
+          <table class="dwell-table">
+            <thead><tr>
+              <th>Zone</th>
+              <th class="dwell-bar-cell">Activity</th>
+              <th>Avg Dwell</th>
+            </tr></thead>
+            <tbody>
+              ${zones.map(([z, v]) => `
+                <tr>
+                  <td style="font-family:var(--mono);font-size:11px;color:var(--text)">${z}</td>
+                  <td class="dwell-bar-cell">
+                    <div class="dwell-bar-wrap">
+                      <div class="dwell-bar-fill" style="width:${(v/maxDwell*100).toFixed(1)}%"></div>
+                    </div>
+                  </td>
+                  <td class="dwell-val">${v.toFixed(0)}s</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>`;
+      }
+    } catch(e) {
+      document.getElementById('m-visitors').textContent = 'ERR';
+    }
+  }
+
+  async function loadFunnel() {
+    try {
+      const d = await fetchJson(`/stores/${storeId()}/funnel`);
+      const stages = d.funnel || [];
+      const maxV = stages.length ? Math.max(...stages.map(s => s.visitors)) || 1 : 1;
+      document.getElementById('funnel-content').innerHTML = stages.map(s => `
+        <div class="funnel-stage">
+          <div class="funnel-label">${s.stage}</div>
+          <div class="funnel-bar-wrap">
+            <div class="funnel-bar" style="width:${(s.visitors/maxV*100).toFixed(1)}%">
+              <span class="funnel-count">${s.visitors}</span>
+            </div>
+          </div>
+          <div class="funnel-drop">${s.drop_off_pct > 0 ? '-' + s.drop_off_pct + '%' : ''}</div>
+        </div>
+      `).join('') || '<div class="loading" style="color:var(--muted)">No data</div>';
+    } catch(e) {
+      document.getElementById('funnel-content').innerHTML = '<div class="error-msg">API unavailable</div>';
+    }
+  }
+
+  async function loadHeatmap() {
+    try {
+      const d = await fetchJson(`/stores/${storeId()}/heatmap`);
+      const zones = (d.zones || []).slice(0, 9);
+      document.getElementById('heatmap-confidence').textContent = d.data_confidence || '—';
+      if (!zones.length) {
+        document.getElementById('heatmap-content').innerHTML =
+          '<div class="loading" style="color:var(--muted)">No zone data yet</div>';
+        return;
+      }
+      document.getElementById('heatmap-content').innerHTML = `
+        <div class="heatmap-grid">
+          ${zones.map((z, i) => `
+            <div class="heatmap-zone">
+              <div class="heatmap-zone-bg" style="background:${HEATMAP_COLORS[i % HEATMAP_COLORS.length]}"></div>
+              <div class="heatmap-zone-name">${z.zone_id}</div>
+              <div class="heatmap-zone-score">${z.normalised_score}</div>
+              <div class="heatmap-zone-dwell">${z.avg_dwell_seconds}s dwell</div>
+            </div>
+          `).join('')}
+        </div>`;
+    } catch(e) {
+      document.getElementById('heatmap-content').innerHTML = '<div class="error-msg">API unavailable</div>';
+    }
+  }
+
+  async function loadAnomalies() {
+    try {
+      const d = await fetchJson(`/stores/${storeId()}/anomalies`);
+      const anomalies = d.anomalies || [];
+      document.getElementById('anomaly-count').textContent = anomalies.length;
+      if (!anomalies.length) {
+        document.getElementById('anomaly-content').innerHTML =
+          '<div class="no-anomalies">✓ No active anomalies</div>';
+        return;
+      }
+      document.getElementById('anomaly-content').innerHTML = anomalies.map(a => `
+        <div class="anomaly-item ${a.severity.toLowerCase()}">
+          <span class="anomaly-badge ${a.severity.toLowerCase()}">${a.severity}</span>
+          <div>
+            <div class="anomaly-text">${a.type.replace(/_/g,' ')}: ${a.detail}</div>
+            <div class="anomaly-action">→ ${a.suggested_action}</div>
+          </div>
+        </div>
+      `).join('');
+    } catch(e) {
+      document.getElementById('anomaly-content').innerHTML = '<div class="error-msg">API unavailable</div>';
+    }
+  }
+
+  async function loadHealth() {
+    try {
+      const d = await fetchJson('/health');
+      const statusClass = d.status === 'OK' ? 'ok' : d.status === 'DEGRADED' ? 'warn' : 'bad';
+      const stores = d.stores || [];
+      document.getElementById('api-status').textContent = `API ${d.status}`;
+      document.getElementById('health-content').innerHTML = `
+        <div class="health-item">
+          <span class="health-key">STATUS</span>
+          <span class="health-val ${statusClass}">${d.status}</span>
+        </div>
+        <div class="health-item">
+          <span class="health-key">TOTAL_EVENTS</span>
+          <span class="health-val">${d.total_events_ingested?.toLocaleString() ?? '—'}</span>
+        </div>
+        ${stores.map(s => `
+          <div class="health-item">
+            <span class="health-key">${s.store_id}</span>
+            <span class="health-val ${s.feed_status === 'OK' ? 'ok' : 'warn'}">${s.feed_status}</span>
+          </div>
+          <div class="health-item">
+            <span class="health-key">LAG</span>
+            <span class="health-val ${(s.lag_minutes || 0) > 10 ? 'warn' : 'ok'}">${s.lag_minutes != null ? s.lag_minutes + 'min' : '—'}</span>
+          </div>
+        `).join('')}
+      `;
+    } catch(e) {
+      document.getElementById('health-content').innerHTML = '<div class="error-msg">Cannot reach API</div>';
+      document.getElementById('api-status').textContent = 'API OFFLINE';
+    }
+  }
+
+  async function refreshAll() {
+    document.getElementById('last-updated').textContent = new Date().toLocaleTimeString();
+    await Promise.all([loadMetrics(), loadFunnel(), loadHeatmap(), loadAnomalies(), loadHealth()]);
+  }
+
+  // Auto refresh every 3 seconds
+  refreshAll();
+  setInterval(refreshAll, 3000);
+</script>
+</body>
+</html>
+HTMLEOF
+echo "Done"
