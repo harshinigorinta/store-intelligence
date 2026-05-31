@@ -2,6 +2,8 @@ import time
 import uuid
 import logging
 import json
+from fastapi.responses import StreamingResponse
+import asyncio
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
@@ -156,3 +158,45 @@ def health():
     """
     with get_conn() as conn:
         return get_health(conn)
+@app.post("/simulation/start")
+def sim_start(speed: float = 1.0, camera_id: str = None):
+    """Start replaying events at configurable speed. Use speed=5.0 for fast replay."""
+    return start_simulation(speed=speed, camera_id=camera_id)
+
+@app.post("/simulation/stop")
+def sim_stop():
+    """Stop the running simulation."""
+    return stop_simulation()
+
+@app.post("/simulation/speed")
+def sim_speed(speed: float = 1.0):
+    """Change simulation speed without restarting."""
+    return set_speed(speed)
+
+@app.get("/simulation/status")
+def sim_status():
+    """Get current simulation status."""
+    return get_simulation_status()
+
+
+@app.get("/stores/{store_id}/stream")
+async def metrics_stream(store_id: str):
+    """Server-Sent Events stream — pushes metric updates every 2 seconds."""
+    async def event_generator():
+        while True:
+            try:
+                with get_conn() as conn:
+                    data = get_metrics(store_id, conn)
+                yield f"data: {json.dumps(data)}\n\n"
+            except Exception as e:
+                yield f"data: {json.dumps({'error': str(e)})}\n\n"
+            await asyncio.sleep(2)
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+        }
+    )
