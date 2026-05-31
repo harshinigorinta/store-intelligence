@@ -4,6 +4,12 @@ End-to-end pipeline from raw CCTV footage to a live store analytics API.
 Built for Brigade Road Bangalore store (STORE_BLR_002) with real zone layout and POS data.
 
 ---
+## Live Deployments
+| Service | URL |
+|---------|-----|
+| Live Dashboard | https://store-intelligence-ten.vercel.app |
+| Backend API | https://store-intelligence-production-325f.up.railway.app |
+| Swagger UI | https://store-intelligence-production-325f.up.railway.app/docs |
 
 ## Quick Start (5 commands)
 
