@@ -1,82 +1,58 @@
 {
   "stores": [
     {
-      "store_id": "STORE_BLR_002",
-      "name": "Apex Retail Bangalore",
-      "open_hours": {"open": "10:00", "close": "21:00"},
+      "store_id": "ST1008",
+      "name": "Brigade_Bangalore",
+      "city": "Bangalore",
+      "open_hours": {"open": "10:00", "close": "22:00"},
       "cameras": [
         {
           "camera_id": "CAM_ENTRY_01",
           "file": "CAM 1.mp4",
           "type": "entry",
-          "clip_start_time": "2026-03-03T10:00:00Z"
+          "clip_start_time": "2026-04-10T10:00:00Z"
         },
         {
           "camera_id": "CAM_FLOOR_01",
           "file": "CAM 2.mp4",
           "type": "floor",
-          "clip_start_time": "2026-03-03T10:00:00Z"
+          "clip_start_time": "2026-04-10T10:00:00Z"
         },
         {
           "camera_id": "CAM_FLOOR_02",
           "file": "CAM 3.mp4",
           "type": "floor",
-          "clip_start_time": "2026-03-03T10:00:00Z"
+          "clip_start_time": "2026-04-10T10:00:00Z"
         },
         {
           "camera_id": "CAM_BILLING_01",
           "file": "CAM 4.mp4",
           "type": "billing",
-          "clip_start_time": "2026-03-03T10:00:00Z"
+          "clip_start_time": "2026-04-10T10:00:00Z"
         },
         {
           "camera_id": "CAM_BILLING_02",
           "file": "CAM 5.mp4",
           "type": "billing",
-          "clip_start_time": "2026-03-03T10:00:00Z"
+          "clip_start_time": "2026-04-10T10:00:00Z"
         }
       ],
       "zones": [
-        {
-          "zone_id": "ENTRY",
-          "label": "Entry/Exit",
-          "camera_ids": ["CAM_ENTRY_01"],
-          "polygon": [[0.0, 0.7], [1.0, 0.7], [1.0, 1.0], [0.0, 1.0]]
-        },
-        {
-          "zone_id": "SKINCARE",
-          "label": "Skincare",
-          "sku_zone": "MOISTURISER",
-          "camera_ids": ["CAM_FLOOR_01"],
-          "polygon": [[0.0, 0.0], [0.5, 0.0], [0.5, 0.5], [0.0, 0.5]]
-        },
-        {
-          "zone_id": "MAKEUP",
-          "label": "Makeup",
-          "sku_zone": "FOUNDATION",
-          "camera_ids": ["CAM_FLOOR_01"],
-          "polygon": [[0.5, 0.0], [1.0, 0.0], [1.0, 0.5], [0.5, 0.5]]
-        },
-        {
-          "zone_id": "HAIRCARE",
-          "label": "Haircare",
-          "sku_zone": "SHAMPOO",
-          "camera_ids": ["CAM_FLOOR_02"],
-          "polygon": [[0.0, 0.0], [0.5, 0.0], [0.5, 0.5], [0.0, 0.5]]
-        },
-        {
-          "zone_id": "FRAGRANCES",
-          "label": "Fragrances",
-          "sku_zone": "PERFUME",
-          "camera_ids": ["CAM_FLOOR_02"],
-          "polygon": [[0.5, 0.0], [1.0, 0.0], [1.0, 0.5], [0.5, 0.5]]
-        },
-        {
-          "zone_id": "BILLING",
-          "label": "Billing Counter",
-          "camera_ids": ["CAM_BILLING_01", "CAM_BILLING_02"],
-          "polygon": [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]]
-        }
+        {"zone_id": "ENTRY", "label": "Entry/Exit", "camera_ids": ["CAM_ENTRY_01"], "polygon": [[0.0, 0.6], [1.0, 0.6], [1.0, 1.0], [0.0, 1.0]]},
+        {"zone_id": "GV", "label": "Good Vibes", "sku_zone": "SHEET_MASK", "camera_ids": ["CAM_FLOOR_01"], "polygon": [[0.3, 0.0], [0.5, 0.0], [0.5, 0.3], [0.3, 0.3]]},
+        {"zone_id": "DERMDOC", "label": "DermDoc", "sku_zone": "SKINCARE", "camera_ids": ["CAM_FLOOR_01"], "polygon": [[0.5, 0.0], [0.65, 0.0], [0.65, 0.3], [0.5, 0.3]]},
+        {"zone_id": "MINIMALIST", "label": "Minimalist", "sku_zone": "SKINCARE", "camera_ids": ["CAM_FLOOR_01"], "polygon": [[0.65, 0.0], [0.75, 0.0], [0.75, 0.3], [0.65, 0.3]]},
+        {"zone_id": "FOXTALE", "label": "Foxtale/Pilgrim", "sku_zone": "SUNSCREEN", "camera_ids": ["CAM_FLOOR_01"], "polygon": [[0.75, 0.0], [0.9, 0.0], [0.9, 0.3], [0.75, 0.3]]},
+        {"zone_id": "FRAGRANCE", "label": "Fragrance & Nails", "sku_zone": "FRAGRANCE", "camera_ids": ["CAM_FLOOR_01"], "polygon": [[0.0, 0.3], [0.15, 0.3], [0.15, 0.7], [0.0, 0.7]]},
+        {"zone_id": "FOH", "label": "Front of House", "sku_zone": "FEATURED", "camera_ids": ["CAM_FLOOR_01", "CAM_FLOOR_02"], "polygon": [[0.15, 0.3], [0.55, 0.3], [0.55, 0.7], [0.15, 0.7]]},
+        {"zone_id": "MAKEUP_UNIT", "label": "Makeup Unit", "sku_zone": "MAKEUP", "camera_ids": ["CAM_FLOOR_01", "CAM_FLOOR_02"], "polygon": [[0.55, 0.3], [0.75, 0.3], [0.75, 0.7], [0.55, 0.7]]},
+        {"zone_id": "MAYBELLINE", "label": "Maybelline", "sku_zone": "MAKEUP", "camera_ids": ["CAM_FLOOR_02"], "polygon": [[0.0, 0.7], [0.15, 0.7], [0.15, 1.0], [0.0, 1.0]]},
+        {"zone_id": "FACES", "label": "Faces Canada", "sku_zone": "MAKEUP", "camera_ids": ["CAM_FLOOR_02"], "polygon": [[0.15, 0.7], [0.3, 0.7], [0.3, 1.0], [0.15, 1.0]]},
+        {"zone_id": "LAKME", "label": "Lakme", "sku_zone": "MAKEUP", "camera_ids": ["CAM_FLOOR_02"], "polygon": [[0.3, 0.7], [0.45, 0.7], [0.45, 1.0], [0.3, 1.0]]},
+        {"zone_id": "NYBAE", "label": "NY Bae / Mars", "sku_zone": "MAKEUP", "camera_ids": ["CAM_FLOOR_02"], "polygon": [[0.45, 0.7], [0.6, 0.7], [0.6, 1.0], [0.45, 1.0]]},
+        {"zone_id": "ALPS", "label": "Alps/Mens Care", "sku_zone": "HAIRCARE", "camera_ids": ["CAM_FLOOR_02"], "polygon": [[0.6, 0.7], [0.75, 0.7], [0.75, 1.0], [0.6, 1.0]]},
+        {"zone_id": "LOREAL", "label": "Loreal", "sku_zone": "HAIRCARE", "camera_ids": ["CAM_FLOOR_02"], "polygon": [[0.75, 0.7], [0.88, 0.7], [0.88, 1.0], [0.75, 1.0]]},
+        {"zone_id": "BILLING", "label": "Cash Counter", "camera_ids": ["CAM_BILLING_01", "CAM_BILLING_02"], "polygon": [[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0]]}
       ]
     }
   ]

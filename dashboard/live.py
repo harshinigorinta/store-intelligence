@@ -28,7 +28,7 @@ except ImportError:
     from rich import box
 
 API_BASE = "http://localhost:8000"
-STORE_ID = "STORE_BLR_002"
+STORE_ID = "ST1008"
 REFRESH_SECONDS = 2
 
 console = Console()
