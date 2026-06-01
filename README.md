@@ -90,7 +90,7 @@ pip install pytest pytest-cov httpx
 pytest tests/ -v --cov=app --cov-report=term-missing
 ```
 
-Expected: 21 tests passing, 88% coverage.
+Expected: Expected: 112 tests passing across 6 test files.
 
 ---
 
@@ -127,8 +127,13 @@ store-intelligence/
 ├── dashboard/
 │   └── live.py            # Live terminal dashboard (rich)
 ├── tests/
-│   ├── test_metrics.py    # 13 core tests
-│   └── test_additional.py # 8 additional edge case tests (88% total coverage)
+│   │   ├── test_metrics.py         # 13 core API tests
+│   ├── test_additional.py      # 8 additional coverage tests
+│   ├── test_pipeline.py        # 17 schema compliance tests
+│   ├── test_anomalies.py       # 20 anomaly detection tests
+│   ├── test_ingestion.py       # 30 ingestion edge case tests
+│   ├── test_funnel.py          # 16 funnel + session tests
+│   └── test_health_heatmap.py  # 8 health + heatmap tests
 ├── docs/
 │   ├── DESIGN.md          # Architecture + AI-assisted decisions
 │   └── CHOICES.md         # 3 key technical decisions
@@ -216,17 +221,39 @@ Real zone definitions from actual store layout:
 - **846 unique visitors** detected across 5 camera feeds
 - **36.2% conversion rate** (visitors who reached billing)
 - **2,794 structured events** generated from real footage
-- **21 tests passing** at 88% coverage
+- **112 tests across 6 test files** 
 
 ---
 
+## Architecture & Decision Docs
+
+| Document | Contents |
+|----------|----------|
+| [DESIGN.md](docs/DESIGN.md) | Full architecture, detection pipeline details, zone classification, Re-ID approach, 3 AI-assisted decisions with agreement/override reasoning |
+| [CHOICES.md](docs/CHOICES.md) | Detection model selection (YOLOv8s vs alternatives), event schema design rationale, SQLite vs PostgreSQL with production migration path |
+
+### Key Decisions Summary
+- **Detection**: YOLOv8s + ByteTrack — chosen for CPU compatibility over YOLOv8m accuracy
+- **Re-ID**: Bbox proximity matching — chosen over OSNet (GPU requirement conflict with docker compose up)
+- **Storage**: SQLite — chosen over PostgreSQL for zero-config Docker deployment
+- **Staff detection**: HSV colour histogram — runs in microseconds vs VLM API calls
+- **Schema**: Nested metadata blob — confidence and is_staff at top level for SQL filtering
+
+### Simulation Controller
+Replay events without running the detection pipeline:
+```bash
+# Start replay at 5x speed
+curl -X POST "https://store-intelligence-production-325f.up.railway.app/simulation/start?speed=5.0"
+
+# Check progress
+curl https://store-intelligence-production-325f.up.railway.app/simulation/status
+
+# Stop
+curl -X POST https://store-intelligence-production-325f.up.railway.app/simulation/stop
+```
 ## Notes
 
 - Video clips are not included in the repository (per challenge rules)
 - YOLOv8s model (`yolov8s.pt`) is auto-downloaded on first run
 - SQLite database is created automatically at `data/store.db`
 - All timestamps are ISO-8601 UTC
-
-## Architecture & Decision Docs
-- [DESIGN.md](docs/DESIGN.md) — Full architecture, detection pipeline details, AI-assisted decisions
-- [CHOICES.md](docs/CHOICES.md) — 3 key technical decisions with full reasoning and trade-offs
