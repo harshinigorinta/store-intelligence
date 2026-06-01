@@ -226,3 +226,7 @@ Real zone definitions from actual store layout:
 - YOLOv8s model (`yolov8s.pt`) is auto-downloaded on first run
 - SQLite database is created automatically at `data/store.db`
 - All timestamps are ISO-8601 UTC
+
+## Architecture & Decision Docs
+- [DESIGN.md](docs/DESIGN.md) — Full architecture, detection pipeline details, AI-assisted decisions
+- [CHOICES.md](docs/CHOICES.md) — 3 key technical decisions with full reasoning and trade-offs
