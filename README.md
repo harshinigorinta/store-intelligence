@@ -101,7 +101,7 @@ pip install pytest pytest-cov httpx
 pytest tests/ -v --cov=app --cov-report=term-missing
 ```
 
-Expected: Expected: 112 tests passing across 6 test files.
+Expected: Expected: 112 tests passing across 7 test files.
 
 ---
 
