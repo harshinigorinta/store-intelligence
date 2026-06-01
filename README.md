@@ -232,7 +232,7 @@ Real zone definitions from actual store layout:
 - **846 unique visitors** detected across 5 camera feeds
 - **36.2% conversion rate** (visitors who reached billing)
 - **2,794 structured events** generated from real footage
-- **112 tests across 6 test files** 
+- **112 tests across 7 test files** 
 
 ---
 
