@@ -11,6 +11,17 @@ Built for Brigade Road Bangalore store (STORE_BLR_002) with real zone layout and
 | Backend API | https://store-intelligence-production-325f.up.railway.app |
 | Swagger UI | https://store-intelligence-production-325f.up.railway.app/docs |
 
+## Screenshots
+
+### Live Web Dashboard
+![Dashboard](docs/screenshots/dashboard.png)
+
+### API Documentation
+![API Docs](docs/screenshots/api_docs.png)
+
+### Test Suite
+![Tests](docs/screenshots/tests.png)
+
 ## Quick Start (5 commands)
 
 ```bash
