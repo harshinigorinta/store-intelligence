@@ -138,7 +138,7 @@ store-intelligence/
 ├── dashboard/
 │   └── live.py            # Live terminal dashboard (rich)
 ├── tests/
-│   │   ├── test_metrics.py         # 13 core API tests
+│   ├── test_metrics.py         # 13 core API tests
 │   ├── test_additional.py      # 8 additional coverage tests
 │   ├── test_pipeline.py        # 17 schema compliance tests
 │   ├── test_anomalies.py       # 20 anomaly detection tests
